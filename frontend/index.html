@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Background Remover — UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-100: #071028;
+      --bg-200: linear-gradient(135deg, #071028 0%, #041226 50%, #0a1b3d 100%);
+      --card: rgba(255,255,255,0.06);
+      --muted: #99a6b4;
+      --accent: #ff8c3a;
+      --accent-2: #1e90ff;
+      --glass: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.12);
+      --success: #00d4aa;
+      --warning: #ffbe0b;
+    }
+
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,'Segoe UI',Roboto,Arial;margin:0;padding:0}
+    html,body{height:100%;overflow-x:hidden}
+    
+    body{
+      background:var(--bg-200);
+      background-attachment:fixed;
+      color:#eef6ff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      position:relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, rgba(30,144,255,0.03) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255,140,58,0.03) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(0,212,170,0.02) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(1deg); }
+      66% { transform: translateY(-10px) rotate(-1deg); }
+    }
+
+    .shell{width:min(1400px,96vw);position:relative}
+    
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:24px;
+      padding:20px 24px;
+      background:var(--glass);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-radius:16px;
+      border:1px solid var(--glass-border);
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    }
+    
+    .logo-wrap{display:flex;align-items:center;gap:16px}
+    
+    .logo{
+      width:64px;
+      height:64px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      position:relative;
+      background:linear-gradient(135deg, rgba(255,140,58,0.2), rgba(30,144,255,0.1));
+      box-shadow:0 8px 32px rgba(16,36,85,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      border:1px solid rgba(255,255,255,0.1);
+      padding:8px;
+      transition:all 0.3s ease;
+    }
+    
+    .logo:hover {
+      transform:translateY(-4px) scale(1.05);
+      box-shadow:0 16px 48px rgba(16,36,85,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    
+    .logo img{width:48px;height:48px;object-fit:contain;border-radius:8px}
+
+    h1{font-size:24px;font-weight:800;background:linear-gradient(135deg, #ffffff, #b8d4ff);background-clip:text;-webkit-background-clip:text;color:transparent}
+    .subtitle{color:var(--muted);font-size:14px;margin-top:4px}
+
+    .card{
+      background:var(--glass);
+      backdrop-filter:blur(24px);
+      -webkit-backdrop-filter:blur(24px);
+      border-radius:20px;
+      padding:32px;
+      box-shadow:0 16px 64px rgba(2,6,23,0.4);
+      border:1px solid var(--glass-border);
+      position:relative;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:32px;
+      align-items:stretch;
+      min-height:500px;
+    }
+
+    .left{
+      padding:24px;
+      background:var(--glass);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      border-radius:16px;
+      border:1px solid var(--glass-border);
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .left::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--success));
+      opacity: 0.6;
+    }
+
+    .right{
+      padding:24px;
+      background:var(--glass);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      border-radius:16px;
+      border:1px solid var(--glass-border);
+      display:flex;
+      flex-direction:column;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .right::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--success), var(--accent), var(--accent-2));
+      opacity: 0.6;
+    }
+
+    .section-title{
+      font-size:16px;
+      font-weight:700;
+      color:#ffffff;
+      margin-bottom:20px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--accent), var(--accent-2));
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.2); }
+    }
+
+    .uploader{
+      border-radius:12px;
+      padding:32px 24px;
+      background:rgba(255,255,255,0.02);
+      border:2px dashed var(--glass-border);
+      min-height:320px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      transition:all 0.3s ease;
+      flex:1;
+    }
+
+    .uploader:hover {
+      border-color: var(--accent);
+      background: rgba(255,140,58,0.02);
+      transform: translateY(-2px);
+    }
+
+    .uploader.drag-over {
+      border-color: var(--success);
+      background: rgba(0,212,170,0.05);
+      transform: scale(1.02);
+    }
+
+    .file-btn{
+      position:absolute;
+      left:20px;
+      top:16px;
+      z-index:10;
+    }
+
+    input[type=file]{display:none}
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      border:0;
+      padding:12px 20px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-size:14px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent-2),#16a0ff);
+      color:white;
+      box-shadow:0 8px 24px rgba(30,144,255,0.15);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow:0 12px 32px rgba(30,144,255,0.25);
+    }
+
+    .btn-accent{
+      background:linear-gradient(135deg,var(--accent),#ffb07a);
+      color:#061218;
+      box-shadow:0 8px 24px rgba(255,140,58,0.15);
+    }
+
+    .btn-accent:hover {
+      transform: translateY(-2px);
+      box-shadow:0 12px 32px rgba(255,140,58,0.25);
+    }
+
+    .btn-ghost{
+      background:rgba(255,255,255,0.05);
+      border:1px solid var(--glass-border);
+      color:var(--muted);
+      backdrop-filter:blur(8px);
+    }
+
+    .btn-ghost:hover {
+      background:rgba(255,255,255,0.1);
+      color:#ffffff;
+      transform: translateY(-1px);
+    }
+
+    .preview{
+      max-width:100%;
+      max-height:280px;
+      border-radius:12px;
+      object-fit:contain;
+      background:rgba(0,0,0,0.2);
+      padding:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .muted{color:var(--muted);font-size:14px;line-height:1.5}
+
+    .controls{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-top:24px;
+      flex-wrap:wrap;
+    }
+
+    .result-wrap{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:12px;
+      background:rgba(0,0,0,0.1);
+      padding:16px;
+      border:1px solid rgba(255,255,255,0.05);
+      min-height:320px;
+      position:relative;
+    }
+
+    .result-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(45deg, var(--accent-2), var(--accent), var(--success));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: exclude;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .result-wrap:hover::before {
+      opacity: 1;
+    }
+
+    .result-img{
+      max-width:100%;
+      max-height:320px;
+      border-radius:8px;
+      background:rgba(0,0,0,0.2);
+      padding:8px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .download-row{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin-top:20px;
+      flex-wrap:wrap;
+    }
+
+    .note{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:13px;
+      padding:12px;
+      background:rgba(255,255,255,0.02);
+      border-radius:8px;
+      border-left:3px solid var(--accent);
+    }
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .status-success { color: var(--success); }
+    .status-error { color: #ff4757; }
+    .status-processing { color: var(--warning); }
+
+    @media (max-width:1200px){
+      .grid{grid-template-columns:1fr;gap:24px}
+      .shell{width:min(900px,96vw)}
+    }
+
+    @media (max-width:768px){
+      body{padding:16px}
+      .topbar{padding:16px;margin-bottom:16px}
+      .card{padding:20px}
+      .left, .right{padding:16px}
+      .uploader{padding:24px 16px;min-height:240px}
+      .controls{flex-direction:column;align-items:stretch}
+      .btn{justify-content:center}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="logo-wrap">
+        <div class="logo">
+          <img src="./images/dainik-bhaskar.jfif" alt="Dainik Bhaskar logo">
+        </div>
+      </div>
+      <div>
+        <h1>AI Background Remover</h1>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div class="left">
+          <div class="section-title">📤 Upload & Process</div>
+
+          <div class="uploader" id="dropZone">
+            <div class="file-btn">
+              <label class="btn btn-accent" for="fileInput">Choose Image</label>
+              <input id="fileInput" type="file" accept="image/*" />
+            </div>
+
+            <img id="inputPreview" class="preview" alt="Input preview" src="" style="display:none" />
+
+            <div id="dropContent" style="text-align:center">
+              <div style="font-weight:700;color:#ffffff;margin-bottom:12px;font-size:18px">Drop your image here</div>
+              <div class="muted">Or click <strong style="color:var(--accent)">Choose Image</strong> to browse<br>Best results with clear subjects and good lighting</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="removeBtn" class="btn btn-primary">
+              <span>🚀</span> Remove Background
+            </button>
+            <button id="clearBtn" class="btn btn-ghost">
+              <span>🗑️</span> Clear
+            </button>
+            <div id="status" style="margin-left:auto;display:flex;align-items:center;gap:8px"></div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="section-title">📥 Result & Download</div>
+
+          <div class="result-wrap">
+            <img id="outputImg" class="result-img" alt="Result image" src="" style="display:none" />
+            <div id="noResult" class="muted" style="text-align:center">
+              <div style="font-size:48px;margin-bottom:12px;opacity:0.3">🎯</div>
+              <div style="font-weight:600;margin-bottom:8px">Ready for processing</div>
+              <div>Your background-free image will appear here</div>
+            </div>
+          </div>
+
+          <div class="download-row">
+            <a id="downloadLink" class="btn btn-accent" href="#" download style="display:none">
+              <span>💾</span> Download PNG
+            </a>
+            <button id="openTabBtn" class="btn btn-ghost" style="display:none">
+              <span>🔗</span> Open in Tab
+            </button>
+            <div style="margin-left:auto;color:var(--muted);font-size:13px">
+              💾 Server saves to: <code>background/</code>
+            </div>
+          </div>
+
+          <div class="note">
+            <strong>💡 Pro Tip:</strong> Images with high contrast between subject and background yield the best results.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Company server endpoint
+    const endpoint = 'http://192.168.245.46:7862/remove-background';
+    
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const inputPreview = document.getElementById('inputPreview');
+    const dropContent = document.getElementById('dropContent');
+    const removeBtn = document.getElementById('removeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const status = document.getElementById('status');
+    const outputImg = document.getElementById('outputImg');
+    const noResult = document.getElementById('noResult');
+    const downloadLink = document.getElementById('downloadLink');
+    const openTabBtn = document.getElementById('openTabBtn');
+
+    let currentFile = null;
+    let currentObjectUrl = null;
+
+    function showStatus(content, type = 'processing') {
+      status.innerHTML = '';
+      if (typeof content === 'string') {
+        const span = document.createElement('span');
+        span.textContent = content;
+        span.className = `status-${type}`;
+        status.appendChild(span);
+      } else {
+        status.appendChild(content);
+      }
+    }
+
+    function clearStatus() {
+      status.innerHTML = '';
+    }
+
+    ['dragenter', 'dragover'].forEach(ev => {
+      dropZone.addEventListener(ev, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('drag-over');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(ev => {
+      dropZone.addEventListener(ev, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drag-over');
+      });
+    });
+
+    dropZone.addEventListener('drop', e => {
+      const files = Array.from(e.dataTransfer.files);
+      const imageFile = files.find(f => f.type.startsWith('image/'));
+      if (imageFile) attachFile(imageFile);
+    });
+
+    fileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) attachFile(file);
+    });
+
+    function attachFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showStatus('Please select a valid image file', 'error');
+        setTimeout(clearStatus, 3000);
+        return;
+      }
+
+      currentFile = file;
+      showStatus(`Selected: ${file.name}`, 'success');
+      
+      const reader = new FileReader();
+      reader.onload = ev => {
+        inputPreview.src = ev.target.result;
+        inputPreview.style.display = 'block';
+        dropContent.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+
+      resetResults();
+      setTimeout(clearStatus, 2000);
+    }
+
+    function resetResults() {
+      outputImg.style.display = 'none';
+      downloadLink.style.display = 'none';
+      openTabBtn.style.display = 'none';
+      noResult.style.display = 'block';
+      if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+      }
+    }
+
+    clearBtn.addEventListener('click', () => {
+      currentFile = null;
+      fileInput.value = '';
+      inputPreview.src = '';
+      inputPreview.style.display = 'none';
+      dropContent.style.display = 'block';
+      resetResults();
+      clearStatus();
+    });
+
+    removeBtn.addEventListener('click', async () => {
+      if (!currentFile) {
+        showStatus('Please select an image first', 'error');
+        setTimeout(clearStatus, 3000);
+        return;
+      }
+
+      const spinner = document.createElement('div');
+      spinner.className = 'loading-spinner';
+      showStatus('Processing image...');
+      status.appendChild(spinner);
+
+      const formData = new FormData();
+      formData.append('file', currentFile, currentFile.name);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Server error ${response.status}: ${errorText}`);
+        }
+
+        const blob = await response.blob();
+        
+        if (currentObjectUrl) {
+          URL.revokeObjectURL(currentObjectUrl);
+        }
+
+        currentObjectUrl = URL.createObjectURL(blob);
+        outputImg.src = currentObjectUrl;
+        outputImg.style.display = 'block';
+        noResult.style.display = 'none';
+
+        const fileName = currentFile.name.replace(/\.[^.]+$/, '') + '-no-bg.png';
+        downloadLink.href = currentObjectUrl;
+        downloadLink.download = fileName;
+        downloadLink.style.display = 'inline-flex';
+        openTabBtn.style.display = 'inline-flex';
+
+        openTabBtn.onclick = () => window.open(currentObjectUrl, '_blank');
+
+        showStatus('Background removed successfully! 🎉', 'success');
+        setTimeout(clearStatus, 3000);
+
+      } catch (error) {
+        console.error('Processing failed:', error);
+        showStatus(`Processing failed: ${error.message}`, 'error');
+        setTimeout(clearStatus, 5000);
+      }
+    });
+  </script>
+</body>
+</html>
